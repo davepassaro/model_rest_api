@@ -1,0 +1,1 @@
+in terminal ---> [python main.py ]: to start
