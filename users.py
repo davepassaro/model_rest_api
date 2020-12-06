@@ -30,21 +30,28 @@ def users_get_post():
         vered = auxfunctions.verify(token) 
         print(vered)
         if  vered and vered != False:
-            content["user_id"] =vered
+            content["user_Id"] =vered
         else: 
             return (jsonify({
                 "Error": "The request token was missing or invalid(2)"
                 }), 401)
         
         new_user = datastore.entity.Entity(key=client.key(constants.users))
-        new_user.update({"name":content["name"],"user_id":content["user_id"],"boats" : []})
+        new_user.update({"name":content["name"],"user_Id":content["user_Id"],"boats" : []})
         client.put(new_user)
         return (jsonify({
         "id": new_user.key.id,
-        "user_id": new_user["user_id"],
+        "user_Id": new_user["user_Id"],
         "boats" : [],
         "name":content["name"],
         "self": (request.url + "/" + str(new_user.key.id))
         }), 201)
     elif request.method == "GET":
-        
+        query = client.query(kind=constants.users)
+        results = list(query.fetch())
+        for e in results:
+            e["id"] = e.key.id
+        return json.dumps(results)
+    else:
+        return 'Method not recogonized'  
+

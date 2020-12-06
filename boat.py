@@ -2,6 +2,7 @@ from google.cloud import datastore
 from flask import Flask, Blueprint, request,jsonify
 import json
 import constants
+import auxfunctions
 
 client = datastore.Client()
 bp = Blueprint('boat' ,__name__, url_prefix='/boats')
@@ -10,7 +11,22 @@ bp = Blueprint('boat' ,__name__, url_prefix='/boats')
 def boats_get_post():
     if request.method == 'POST':
         content = request.get_json()
-        if(len(content) != 4):
+        headers = request.headers
+        bearer = headers.get('Authorization')    # Bearer YourTokenHere
+        if bearer == None: 
+            return (jsonify({
+                "Error": "The request token was missing or invalid"
+                }), 401)
+        token = bearer.split()[1]  # YourTokenHere cited stack overflowhttps://stackoverflow.com/questions/63518441/how-to-read-a-bearer-token-from-postman-into-python-code
+        vered = auxfunctions.verify(token) 
+        #print(vered)
+        if  vered and vered != False:
+            content["owner"] =vered
+        else: 
+            return (jsonify({
+                "Error": "The request token was missing or invalid"
+                }), 401)
+        if(len(content) != 3):
             return (jsonify({
                 "Error": "The request object is missing at least one of the required attributes"
                 }), 400)
@@ -21,15 +37,35 @@ def boats_get_post():
         return (jsonify({
         "id": new_boat.key.id,
         "name": content["name"],
+        "owner":content["owner"],
         "type": content["type"],
         "length": content["length"],
         "loads" : [],
         "self": (request.url + "/" + str(new_boat.key.id))
         }), 201)
     elif request.method == 'GET':
-        query = client.query(kind=constants.boats)
+        #print(query)
+        #getList = []
+        content = {}
+        headers = request.headers
+        bearer = headers.get('Authorization')    # Bearer YourTokenHere
+        if bearer == None: 
+            return (jsonify({
+                "Error": "The request token was missing or invalid"
+                }), 401)
 
-        q_limit = int(request.args.get('limit', '3'))
+        token = bearer.split()[1]  # YourTokenHere cited stack overflowhttps://stackoverflow.com/questions/63518441/how-to-read-a-bearer-token-from-postman-into-python-code
+        vered = auxfunctions.verify(token) 
+        #print(vered)
+        if  vered and vered != False:
+            content["owner"] =vered
+        else: 
+            return (jsonify({
+                "Error": "The request token was missing or invalid"
+                }), 401)
+        query = client.query(kind=constants.boats)
+        query = query.add_filter('user_Id', '=', str(content["owner"]))
+        q_limit = int(request.args.get('limit', '5'))
         q_offset = int(request.args.get('offset', '0'))
         l_iterator = query.fetch(limit= q_limit, offset=q_offset)
         pages = l_iterator.pages
