@@ -10,14 +10,14 @@ client_id = "1034814845689-3gua5nmfjbl17jndavgg4ubjqq77to4f.apps.googleuserconte
 client_secret = "73EUBGWnTtZl8Ap3PAIRKiRo"
 def verify(jwtok):
     req = requests.Request()
-    print(jwtok,"jwt") 
-    #try: 
-    id_info = id_token.verify_oauth2_token(jwtok, req, client_id)
-    print(id_info)
-    #except :
+    #print(jwtok,"jwt") 
+    try: 
+        id_info = id_token.verify_oauth2_token(jwtok, req, client_id)
+        #print(id_info)
+    except :
 
-    #   return False
-    print(id_info,"idfo")
+       return False
+    #print(id_info,"idfo")
     if  id_info and "iss" in id_info and id_info['iss'] != 'accounts.google.com':
         return False
         #  cited google auth docs

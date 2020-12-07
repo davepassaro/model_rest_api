@@ -26,7 +26,7 @@ def users_get_post():
                 "Error": "The request token was missing or invalid(1)"
                 }), 401)
         token = bearer.split()[1]  # YourTokenHere cited stack overflowhttps://stackoverflow.com/questions/63518441/how-to-read-a-bearer-token-from-postman-into-python-code
-        print(token,"tok")
+        #print(token,"tok")
         vered = auxfunctions.verify(token) 
         print(vered)
         if  vered and vered != False:
@@ -53,5 +53,24 @@ def users_get_post():
             e["id"] = e.key.id
         return json.dumps(results)
     else:
-        return 'Method not recogonized'  
+        return 'Method not recogonized' 
+            
+@bp.route('/<id>', methods=['DELETE'])
+
+def userDelete(id):
+    if request.method == 'DELETE':
+        key = client.key(constants.users, int(id))
+        user = client.get(key=key)
+        if not user:
+            return (jsonify({"Error": "No user with this user_id exists"}),404)
+        '''query = client.query(kind=constants.boats)
+        results = list(query.fetch())
+        for e in results:
+            #print(e)#["current_boat"])
+            if "carrier" in e and e["carrier"] and e["carrier"]["id"] and int(e["carrier"]["id"]) == int(id):
+                e["carrier"]["id"] = -1
+                e["carrier"]["name"] = ""
+                client.put(e)'''
+        client.delete(key)
+        return ('',204) 
 

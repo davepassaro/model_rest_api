@@ -62,10 +62,10 @@ def oauthroute():
 
     id_info = id_token.verify_oauth2_token( 
     token['id_token'], req, client_id)
-    id = auxfunctions.verify(token)
+    #id = auxfunctions.verify(token)
     #tokenStr = token['id_token']
     x=' '
-    return "Your JWT is: "+token['id_token'] + '               ' + '\n\nand your id (sub value) is ' + id_info["sub"]
+    return "Your JWT is: "+ token['id_token'] + ' <br><br><br>' + 'and your id (sub value) is ' + id_info["sub"]
 
 
 

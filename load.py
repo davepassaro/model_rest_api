@@ -22,7 +22,7 @@ def loads_get_post():
         return (json.dumps(new_load),201)
     elif request.method == 'GET':
         query = client.query(kind=constants.loads)
-        q_limit = int(request.args.get('limit', '3'))
+        q_limit = int(request.args.get('limit', '5'))
         q_offset = int(request.args.get('offset', '0'))
         g_iterator = query.fetch(limit= q_limit, offset=q_offset)
         pages = g_iterator.pages
@@ -61,55 +61,40 @@ def del_loads():
         results = list(query.fetch())
         print (results,"\n\n\n\n")
         return ('',200)
-        '''i = 0
-        for e in results:
-            print (e.key.id,"\n\n\n\n")
-            client.delete(int(e.key.id))#moved!!!!!!!!!!!!!!!!!!!
-        query = client.query(kind=constants.loads)
-        results = list(query.fetch())
-        print (results,"\n\n\n\n")
-        for e in results:
-            #print (results)
-            client.delete(int(e.key.id))#moved!!!!!!!!!!!!!!!!!!!
-        query = client.query(kind=constants.boats)
-        results = list(query.fetch())
-        print (results,"\n\n\n\n")
-        query = client.query(kind=constants.loads)
-        results = list(query.fetch())
-        print (results,"\n\n\n\n")
-        return 200 '''
 
-
-@bp.route('/<id>', methods=['GET','DELETE'])
+@bp.route('/<id>', methods=['GET','DELETE','PUT','PATCH'])
 def loads_put_delete(id):
     if request.method == 'DELETE':
         load_key = client.key(constants.loads, int(id))
         load = client.get(key=load_key)
+
         if not load:
             return (jsonify({"Error": "No load with this load_id exists"}),404)
         query = client.query(kind=constants.boats)
         results = list(query.fetch())
-        print(len(results))
+        print((load,"    "))
         i=0
-        for boat in results:
-            #print("\n\nboat  ",boat,"\n\n")
-            #print (e)#, "          ",load["carrier"]["id"])
-            #if int(boat.key.id) == load.key.id:
-                #print(e)#["current_boat"])
-            if "loads" in boat and boat["loads"]:
-                for i in boat["loads"]:
-                    print("\ni     ",i)#,"    load   ",load)
-                    if "id" in i and i["id"] == id or i == id:
-                        print(boat)
-                        boat["loads"].remove(i)
-                        print(boat)
-                        client.put(boat)
-                        print("magic\n\n\n",i)
-                        client.delete(load_key)
-                        return ('',204)
+        if ( (load["carrier"] == None) or load["carrier"]["id"] == -1):
+            client.delete(load_key)
+            return ('',204)
+        else:  #delete the load from the owner boat
+            for boat in results:
+                #print("\n\nboat  ",boat,"\n\n")
+                #print (e)#, "          ",load["carrier"]["id"])
+                #if int(boat.key.id) == load.key.id:
+                    #print(e)#["current_boat"])
+                if "loads" in boat and boat["loads"]:
+                    for i in boat["loads"]:
+                        print("\ni     ",i)#,"    load   ",load)
+                        if "id" in i and i["id"] == id or i == id:
+                            print(boat)
+                            boat["loads"].remove(i)
+                            print(boat)
+                            client.put(boat)
+                            print("magic\n\n\n",i)
+                            client.delete(load_key)
+                            return ('',204)
 
-            
-                #return ('',204)#moved!!!!!!!!!!!!!!!!!!!
         return('',404)
 
     elif request.method == 'GET':
@@ -126,6 +111,46 @@ def loads_put_delete(id):
         load["self"] = str(request.url)
         load["id"] = load.key.id
         return (json.dumps(load))
+    elif request.method == 'PUT':
+        content = request.get_json()
+        load_key = client.key(constants.loads, int(id))
+        load = client.get(key=load_key)
+        if not load:
+            return (jsonify({"Error": "No load with this boat_id exists"}),404)
+        if not content or "carrier" not in content or "content" not in content or "delivery_date" not in content or "weight" not in content:
+            return (jsonify({"Error": "The request object is missing at least one of the required attributes"}),400)  
+        load.update({"carrier": content["carrier"], "content": content["content"],"weight": content["weight"],"delivery_date": content["delivery_date"]})
+        client.put(load)
+        load["id"] = load.key.id
+        load["self"] = request.url  # + '/' + str(boat.key.id)
+        return (jsonify({
+        "id": load.key.id,
+        "carrier": content["carrier"],
+        "content": content["content"],
+        "weight": content["weight"],
+        "delivery_date": content["delivery_date"],
+        "self": (request.url)# + "/" + str(boat.key.id))
+        }), 200)
+    elif request.method == 'PATCH':
+        content = request.get_json()
+        load_key = client.key(constants.loads, int(id))
+        load = client.get(key=load_key)
+        if not load:
+            return (jsonify({"Error": "No load with this boat_id exists"}),404)
+        if not content or "carrier" not in content or "content" not in content or "delivery_date" not in content or "weight" not in content:
+            return (jsonify({"Error": "The request object is missing at least one of the required attributes"}),400)  
+        load.update({"carrier": content["carrier"], "content": content["content"],"weight": content["weight"],"delivery_date": content["delivery_date"]})
+        client.put(load)
+        load["id"] = load.key.id
+        load["self"] = request.url  # + '/' + str(boat.key.id)
+        return (jsonify({
+        "id": load.key.id,
+        "carrier": content["carrier"],
+        "content": content["content"],
+        "weight": content["weight"],
+        "delivery_date": content["delivery_date"],
+        "self": (request.url)# + "/" + str(boat.key.id))
+        }), 200)
     else:
         return jsonify('Method not recogonized',400)
 

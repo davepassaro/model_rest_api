@@ -26,12 +26,12 @@ def boats_get_post():
             return (jsonify({
                 "Error": "The request token was missing or invalid"
                 }), 401)
-        if(len(content) != 3):
+        if(len(content) != 4):
             return (jsonify({
                 "Error": "The request object is missing at least one of the required attributes"
                 }), 400)
         new_boat = datastore.entity.Entity(key=client.key(constants.boats))
-        new_boat.update({"name": content["name"], "type": content["type"],
+        new_boat.update({"name": content["name"],"owner":content["owner"], "type": content["type"],
           "length": content["length"],"loads" : []})
         client.put(new_boat)
         return (jsonify({
@@ -64,7 +64,9 @@ def boats_get_post():
                 "Error": "The request token was missing or invalid"
                 }), 401)
         query = client.query(kind=constants.boats)
-        query = query.add_filter('user_Id', '=', str(content["owner"]))
+        query = query.add_filter('owner', '=', (content["owner"]))
+        resultsTotal = list(query.fetch()) 
+        lenResults = len(resultsTotal)
         q_limit = int(request.args.get('limit', '5'))
         q_offset = int(request.args.get('offset', '0'))
         l_iterator = query.fetch(limit= q_limit, offset=q_offset)
@@ -77,7 +79,7 @@ def boats_get_post():
             next_url = None
         for e in results:
             e["id"] = e.key.id
-        output = {"boats": results}
+        output = {"boats": results,"usersTotalBoats":lenResults}
         if next_url:
             output["next"] = next_url
         return json.dumps(output)
@@ -96,12 +98,27 @@ def boats_get_post():
 
 
 
-@bp.route('/<id>', methods=['PATCH','DELETE','GET'])
+@bp.route('/<id>', methods=['PUT','PATCH','DELETE','GET'])
 def boats_patch_delete(id):
-    if request.method == 'PATCH':
+    if request.method == 'PUT':
         content = request.get_json()
         if  "name" not in  content or "type"  not in content or "length" not in content:# or not request.body:#and content:
             return (jsonify({"Error": "The request object is missing at least one of the required attributes"}),400)
+        headers = request.headers
+        bearer = headers.get('Authorization')    # Bearer YourTokenHere
+        if bearer == None: 
+            return (jsonify({
+                "Error": "The request token was missing or invalid"
+                }), 401)
+        token = bearer.split()[1]  # YourTokenHere cited stack overflowhttps://stackoverflow.com/questions/63518441/how-to-read-a-bearer-token-from-postman-into-python-code
+        vered = auxfunctions.verify(token) 
+        #print(vered)
+        if  vered and vered != False:
+            content["owner"] =vered
+        else: 
+            return (jsonify({
+                "Error": "The request token was missing or invalid"
+                }), 401)
         boat_key = client.key(constants.boats, int(id))
         boat = client.get(key=boat_key)
         if not boat:
@@ -116,6 +133,47 @@ def boats_patch_delete(id):
         "name": boat["name"],
         "type": boat["type"],
         "length": boat["length"],
+        "owner" : boat["owner"],
+        "self": (request.url)# + "/" + str(boat.key.id))
+        }), 200)
+    elif request.method == 'PATCH':
+        content = request.get_json()
+        if  len(content) < 1:# or not request.body:#and content:
+            return (jsonify({"Error": "The request object is missing at least one of the required attributes"}),400)
+        headers = request.headers
+        bearer = headers.get('Authorization')    # Bearer YourTokenHere
+        if bearer == None: 
+            return (jsonify({
+                "Error": "The request token was missing or invalid"
+                }), 401)
+        token = bearer.split()[1]  # YourTokenHere cited stack overflowhttps://stackoverflow.com/questions/63518441/how-to-read-a-bearer-token-from-postman-into-python-code
+        vered = auxfunctions.verify(token) 
+        #print(vered)
+        if  vered and vered != False:
+            content["owner"] =vered
+        else: 
+            return (jsonify({
+                "Error": "The request token was missing or invalid"
+                }), 401)
+        boat_key = client.key(constants.boats, int(id))
+        boat = client.get(key=boat_key)
+        if not boat:
+            return (jsonify({"Error": "No boat with this boat_id exists"}),404)
+        if "name" in content and content["name"]:
+            boat.update({"name": content["name"]})
+        if "type" in content and content["type"]:
+            boat.update({"type": content["type"]})
+        if "length" in content and content["length"]:
+            boat.update({"length":content["length"]})
+        client.put(boat)
+        boat["id"] = boat.key.id
+        boat["self"] = request.url  # + '/' + str(boat.key.id)
+        return (jsonify({
+        "id": boat.key.id,
+        "name": boat["name"],
+        "type": boat["type"],
+        "length": boat["length"],
+        "owner" : boat["owner"],
         "self": (request.url)# + "/" + str(boat.key.id))
         }), 200)
     elif request.method == 'DELETE':
@@ -123,6 +181,19 @@ def boats_patch_delete(id):
         boat = client.get(key=key)
         if not boat:
             return (jsonify({"Error": "No boat with this boat_id exists"}),404)
+        headers = request.headers
+        bearer = headers.get('Authorization')    # Bearer YourTokenHere
+        if bearer == None: 
+            return (jsonify({
+                "Error": "The request token was missing or invalid"
+                }), 401)
+        token = bearer.split()[1]  # YourTokenHere cited stack overflowhttps://stackoverflow.com/questions/63518441/how-to-read-a-bearer-token-from-postman-into-python-code
+        vered = auxfunctions.verify(token) 
+        #print(vered)
+        if  vered and vered == False:
+            return (jsonify({
+                "Error": "The request token was missing or invalid"
+                }), 401)
         query = client.query(kind=constants.loads)
         results = list(query.fetch())
         for e in results:
@@ -136,6 +207,21 @@ def boats_patch_delete(id):
     elif request.method == 'GET':
         #print("url      ",request.url)
         content = request.get_json()
+        headers = request.headers
+        bearer = headers.get('Authorization')    # Bearer YourTokenHere
+        if bearer == None: 
+            return (jsonify({
+                "Error": "The request token was missing or invalid"
+                }), 401)
+        token = bearer.split()[1]  # YourTokenHere cited stack overflowhttps://stackoverflow.com/questions/63518441/how-to-read-a-bearer-token-from-postman-into-python-code
+        vered = auxfunctions.verify(token) 
+        #print(vered)
+        if  vered and vered != False:
+            content["owner"] =vered
+        else: 
+            return (jsonify({
+                "Error": "The request token was missing or invalid"
+                }), 401)
         boat_key = client.key(constants.boats, int(id))
         boat = client.get(key=boat_key)
         x = 0
@@ -151,6 +237,7 @@ def boats_patch_delete(id):
         "name": boat["name"],
         "type": boat["type"],
         "length": boat["length"],
+        "owner" : boat["owner"],
         "loads":boat["loads"],
         "self": (request.url )#+ "/" + str(boat.key.id))
         }))
