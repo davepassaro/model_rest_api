@@ -10,6 +10,8 @@ bp = Blueprint('boat' ,__name__, url_prefix='/boats')
 @bp.route('', methods=['POST','GET'])
 def boats_get_post():
     if request.method == 'POST':
+        if 'application/json' not in request.accept_mimetypes:
+            return (jsonify({"Error": "Media Type unsupported"}),406)
         content = request.get_json()
         headers = request.headers
         bearer = headers.get('Authorization')    # Bearer YourTokenHere
@@ -46,6 +48,8 @@ def boats_get_post():
     elif request.method == 'GET':
         #print(query)
         #getList = []
+        if 'application/json' not in request.accept_mimetypes:
+            return (jsonify({"Error": "Media Type unsupported"}),406)
         content = {}
         headers = request.headers
         bearer = headers.get('Authorization')    # Bearer YourTokenHere
@@ -79,6 +83,7 @@ def boats_get_post():
             next_url = None
         for e in results:
             e["id"] = e.key.id
+            e["self"] = (request.url +'/'+ str(e.key.id))
         output = {"boats": results,"usersTotalBoats":lenResults}
         if next_url:
             output["next"] = next_url
@@ -101,6 +106,8 @@ def boats_get_post():
 @bp.route('/<id>', methods=['PUT','PATCH','DELETE','GET'])
 def boats_patch_delete(id):
     if request.method == 'PUT':
+        if 'application/json' not in request.accept_mimetypes:
+            return (jsonify({"Error": "Media Type unsupported"}),406)
         content = request.get_json()
         if  "name" not in  content or "type"  not in content or "length" not in content:# or not request.body:#and content:
             return (jsonify({"Error": "The request object is missing at least one of the required attributes"}),400)
@@ -137,6 +144,8 @@ def boats_patch_delete(id):
         "self": (request.url)# + "/" + str(boat.key.id))
         }), 200)
     elif request.method == 'PATCH':
+        if 'application/json' not in request.accept_mimetypes:
+            return (jsonify({"Error": "Media Type unsupported"}),406)
         content = request.get_json()
         if  len(content) < 1:# or not request.body:#and content:
             return (jsonify({"Error": "The request object is missing at least one of the required attributes"}),400)
@@ -205,6 +214,8 @@ def boats_patch_delete(id):
         client.delete(key)
         return ('',204)
     elif request.method == 'GET':
+        if 'application/json' not in request.accept_mimetypes:
+            return (jsonify({"Error": "Media Type unsupported"}),406)
         #print("url      ",request.url)
         content = request.get_json()
         headers = request.headers

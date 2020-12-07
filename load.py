@@ -11,6 +11,8 @@ bp = Blueprint('load', __name__, url_prefix='/loads')
 @bp.route('', methods=['POST','GET'])
 def loads_get_post():
     if request.method == 'POST':
+        if 'application/json' not in request.accept_mimetypes:
+            return (jsonify({"Error": "Media Type unsupported"}),406)
         content = request.get_json()
         if not content or "carrier" not in content or "content" not in content or "delivery_date" not in content or "weight" not in content:
             return (jsonify({"Error": "The request object is missing at least one of the required attributes"}),400)        
@@ -21,6 +23,8 @@ def loads_get_post():
         new_load["self"] = request.url + '/' + str(new_load.key.id)
         return (json.dumps(new_load),201)
     elif request.method == 'GET':
+        if 'application/json' not in request.accept_mimetypes:
+            return (jsonify({"Error": "Media Type unsupported"}),406)
         query = client.query(kind=constants.loads)
         q_limit = int(request.args.get('limit', '5'))
         q_offset = int(request.args.get('offset', '0'))
@@ -34,6 +38,8 @@ def loads_get_post():
             next_url = None
         for e in results:
             e["id"] = e.key.id
+            e["self"] = (request.url +'/'+ str(e.key.id))
+            print(e,(request.url +'/'+ str(e.key.id)))
         output = {"loads": results}
         if next_url:
             output["next"] = next_url
@@ -72,7 +78,7 @@ def loads_put_delete(id):
             return (jsonify({"Error": "No load with this load_id exists"}),404)
         query = client.query(kind=constants.boats)
         results = list(query.fetch())
-        print((load,"    "))
+        #print((load,"    "))
         i=0
         if ( (load["carrier"] == None) or load["carrier"]["id"] == -1):
             client.delete(load_key)
@@ -94,10 +100,10 @@ def loads_put_delete(id):
                             print("magic\n\n\n",i)
                             client.delete(load_key)
                             return ('',204)
-
         return('',404)
-
     elif request.method == 'GET':
+        if 'application/json' not in request.accept_mimetypes:
+            return (jsonify({"Error": "Media Type unsupported"}),406)
         content = request.get_json()
         load_key = client.key(constants.loads, int(id))
         load= client.get(key=load_key)
@@ -112,6 +118,8 @@ def loads_put_delete(id):
         load["id"] = load.key.id
         return (json.dumps(load))
     elif request.method == 'PUT':
+        if 'application/json' not in request.accept_mimetypes:
+            return (jsonify({"Error": "Media Type unsupported"}),406)
         content = request.get_json()
         load_key = client.key(constants.loads, int(id))
         load = client.get(key=load_key)
@@ -132,24 +140,31 @@ def loads_put_delete(id):
         "self": (request.url)# + "/" + str(boat.key.id))
         }), 200)
     elif request.method == 'PATCH':
+        if 'application/json' not in request.accept_mimetypes:
+            return (jsonify({"Error": "Media Type unsupported"}),406)
         content = request.get_json()
         load_key = client.key(constants.loads, int(id))
         load = client.get(key=load_key)
         if not load:
             return (jsonify({"Error": "No load with this boat_id exists"}),404)
-        if not content or "carrier" not in content or "content" not in content or "delivery_date" not in content or "weight" not in content:
+        if len(content) < 1:
             return (jsonify({"Error": "The request object is missing at least one of the required attributes"}),400)  
-        load.update({"carrier": content["carrier"], "content": content["content"],"weight": content["weight"],"delivery_date": content["delivery_date"]})
+        if "content" in content and content["content"]:
+            load.update({"content": content["content"]})        
+        if "delivery_date" in content and content["delivery_date"]:
+            load.update({"delivery_date": content["delivery_date"]})       
+        if "weight" in content and content["weight"]:
+            load.update({"weight": content["carriweighter"]})
         client.put(load)
         load["id"] = load.key.id
         load["self"] = request.url  # + '/' + str(boat.key.id)
         return (jsonify({
         "id": load.key.id,
-        "carrier": content["carrier"],
-        "content": content["content"],
-        "weight": content["weight"],
-        "delivery_date": content["delivery_date"],
-        "self": (request.url)# + "/" + str(boat.key.id))
+        "carrier": load["carrier"],
+        "content": load["content"],
+        "weight": load["weight"],
+        "delivery_date": load["delivery_date"],
+        "self": (request.url)
         }), 200)
     else:
         return jsonify('Method not recogonized',400)
