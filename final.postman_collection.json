@@ -139,6 +139,21 @@
 		},
 		{
 			"name": "get users 200",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "0eef2a73-fd49-478f-ae1d-4f0b9d8d3d5d",
+						"exec": [
+							"pm.test(\"200 status code\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
 			"protocolProfileBehavior": {
 				"disabledSystemHeaders": {
 					"accept-encoding": true
@@ -232,6 +247,21 @@
 		},
 		{
 			"name": "get boats jwt1 200 Copy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "472e67f6-a2f2-4829-88e0-3acbbfd51e3a",
+						"exec": [
+							"pm.test(\"200 status code\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
 			"protocolProfileBehavior": {
 				"disabledSystemHeaders": {
 					"accept": true
@@ -269,7 +299,7 @@
 			"response": []
 		},
 		{
-			"name": "del boat1 wrong user 401",
+			"name": "del boat1 wrong user 403",
 			"event": [
 				{
 					"listen": "test",
@@ -278,8 +308,8 @@
 						"exec": [
 							"//Set boat id environment variable from response\r",
 							"\r",
-							"pm.test(\"401 status code\", function () {\r",
-							"    pm.response.to.have.status(401);\r",
+							"pm.test(\"403 status code\", function () {\r",
+							"    pm.response.to.have.status(403);\r",
 							"});"
 						],
 						"type": "text/javascript"
@@ -333,7 +363,7 @@
 			"response": []
 		},
 		{
-			"name": "put boat1 wrong user 401",
+			"name": "put boat1 wrong user 403",
 			"event": [
 				{
 					"listen": "test",
@@ -342,8 +372,8 @@
 						"exec": [
 							"//Set boat id environment variable from response\r",
 							"\r",
-							"pm.test(\"401 status code\", function () {\r",
-							"    pm.response.to.have.status(401);\r",
+							"pm.test(\"403 status code\", function () {\r",
+							"    pm.response.to.have.status(403);\r",
 							"});"
 						],
 						"type": "text/javascript"
@@ -839,6 +869,21 @@
 		},
 		{
 			"name": "get boats jwt1 200",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "0338c5f5-5d52-47d1-b2c7-ef6bc31a4f34",
+						"exec": [
+							"pm.test(\"200 status code\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
 			"protocolProfileBehavior": {
 				"disabledSystemHeaders": {
 					"accept": true
@@ -877,6 +922,21 @@
 		},
 		{
 			"name": "get boats jwt 2 200",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "a3f43455-7b0a-46ef-9f67-b06e88296c4b",
+						"exec": [
+							"pm.test(\"200 status code\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
 			"protocolProfileBehavior": {
 				"disabledSystemHeaders": {
 					"accept": true
@@ -991,6 +1051,176 @@
 				"body": {
 					"mode": "raw",
 					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{app_url}}/boats",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"boats"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "post boat 400",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "ec13f72e-5317-4dd8-a24e-8147a37bafa9",
+						"exec": [
+							"\r",
+							"pm.test(\"400 status code\", function () {\r",
+							"    pm.response.to.have.status(400);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {}
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{jwt1}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "null",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{app_url}}/boats",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"boats"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "post boat 406",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "c82d196f-03bc-48e2-8b4f-e9fffc9a597e",
+						"exec": [
+							"\r",
+							"pm.test(\"406 status code\", function () {\r",
+							"    pm.response.to.have.status(406);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"accept": true
+				}
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{jwt1}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/atom+xml",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"name\": \"pas1\",\r\n  \"type\": \"Yatch\",\r\n  \"length\": 99\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{app_url}}/boats",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"boats"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "post boat 405",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "0e4ef236-8078-456d-9b8b-3e488ee9f463",
+						"exec": [
+							"\r",
+							"pm.test(\"405 status code\", function () {\r",
+							"    pm.response.to.have.status(405);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {}
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{jwt1}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "null",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -1156,6 +1386,21 @@
 		},
 		{
 			"name": "put boat1 own1",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "f89ea3d4-a19f-4faa-b7a3-8b005dd73a9d",
+						"exec": [
+							"\r",
+							"pm.test(\"200 status code\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
 			"request": {
 				"auth": {
 					"type": "bearer",
@@ -1193,6 +1438,21 @@
 		},
 		{
 			"name": "patch boat1 own1",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "20322ae3-15eb-4745-8a36-378f9807f1f8",
+						"exec": [
+							"\r",
+							"pm.test(\"200 status code\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
 			"request": {
 				"auth": {
 					"type": "bearer",
@@ -1223,6 +1483,114 @@
 					"path": [
 						"boats",
 						"{{boat01_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "put boat1 on load own1 wrong jwt 403",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "c347ed1c-86ef-4c66-bd04-d38b8abeb57e",
+						"exec": [
+							"\r",
+							"pm.test(\"403 status code\", function () {\r",
+							"    pm.response.to.have.status(403);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{jwt2}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{app_url}}/boats/{{boat01_id}}/loads/{{load01_id}}",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"boats",
+						"{{boat01_id}}",
+						"loads",
+						"{{load01_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "del boat1 on load own1 wrong jwt 403",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "cd9e047e-a4d9-41a2-b227-8d07845a1022",
+						"exec": [
+							"\r",
+							"pm.test(\"403 status code\", function () {\r",
+							"    pm.response.to.have.status(403);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{jwt2}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{app_url}}/boats/{{boat01_id}}/loads/{{load01_id}}",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"boats",
+						"{{boat01_id}}",
+						"loads",
+						"{{load01_id}}"
 					]
 				}
 			},
@@ -1279,6 +1647,21 @@
 		},
 		{
 			"name": "get boat1 own1",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "32d52966-816b-4d49-a98b-a8e70a1d3e84",
+						"exec": [
+							"\r",
+							"pm.test(\"200 status code\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
 			"protocolProfileBehavior": {
 				"disableBodyPruning": true
 			},
@@ -1318,85 +1701,22 @@
 			"response": []
 		},
 		{
-			"name": "put boat1 on load own1 wrong jwt 401",
-			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "{{jwt2}}",
-							"type": "string"
-						}
-					]
-				},
-				"method": "PUT",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "{{app_url}}/boats/{{boat01_id}}/loads/{{load01_id}}",
-					"host": [
-						"{{app_url}}"
-					],
-					"path": [
-						"boats",
-						"{{boat01_id}}",
-						"loads",
-						"{{load01_id}}"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "del boat1 on load own1 wrong jwt 401",
-			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "{{jwt2}}",
-							"type": "string"
-						}
-					]
-				},
-				"method": "DELETE",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "{{app_url}}/boats/{{boat01_id}}/loads/{{load01_id}}",
-					"host": [
-						"{{app_url}}"
-					],
-					"path": [
-						"boats",
-						"{{boat01_id}}",
-						"loads",
-						"{{load01_id}}"
-					]
-				}
-			},
-			"response": []
-		},
-		{
 			"name": "put boat1 on load own1",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "411a53ba-cf9a-4c7a-847a-39643f53f738",
+						"exec": [
+							"\r",
+							"pm.test(\"204 status code\", function () {\r",
+							"    pm.response.to.have.status(204);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
 			"request": {
 				"auth": {
 					"type": "bearer",
@@ -1484,6 +1804,21 @@
 		},
 		{
 			"name": "get boat1 own1 Copy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "2ad79541-73b9-4a0f-b0a3-3d5d260f59be",
+						"exec": [
+							"\r",
+							"pm.test(\"200 status code\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
 			"protocolProfileBehavior": {
 				"disableBodyPruning": true
 			},
@@ -1523,7 +1858,22 @@
 			"response": []
 		},
 		{
-			"name": "del boat1 to load own1",
+			"name": "del boat1 to load own1 204",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "6a284dd0-c832-428a-8446-439a5f76576f",
+						"exec": [
+							"\r",
+							"pm.test(\"204 status code\", function () {\r",
+							"    pm.response.to.have.status(204);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
 			"request": {
 				"auth": {
 					"type": "bearer",
@@ -1563,6 +1913,20 @@
 		},
 		{
 			"name": "del load 1",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "99b12d60-d3e9-492d-9afb-e5d3fd617306",
+						"exec": [
+							"pm.test(\"204 status code\", function () {\r",
+							"    pm.response.to.have.status(204);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
 			"request": {
 				"auth": {
 					"type": "noauth"
@@ -1584,6 +1948,20 @@
 		},
 		{
 			"name": "del boat 1",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "54c302ef-2f9d-4717-961b-aec4f3bbf355",
+						"exec": [
+							"pm.test(\"204 status code\", function () {\r",
+							"    pm.response.to.have.status(204);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
 			"request": {
 				"auth": {
 					"type": "bearer",
@@ -1612,6 +1990,20 @@
 		},
 		{
 			"name": "del boat 2",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "d8f50000-c469-4d1d-a737-e19cc991c371",
+						"exec": [
+							"pm.test(\"204 status code\", function () {\r",
+							"    pm.response.to.have.status(204);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
 			"request": {
 				"auth": {
 					"type": "bearer",
@@ -1640,6 +2032,21 @@
 		},
 		{
 			"name": "del boat 4",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "ab04c230-dd26-4d5d-9495-b041551ab6af",
+						"exec": [
+							"\r",
+							"pm.test(\"204 status code\", function () {\r",
+							"    pm.response.to.have.status(204);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
 			"request": {
 				"auth": {
 					"type": "bearer",
@@ -1668,6 +2075,20 @@
 		},
 		{
 			"name": "del boat 5",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "3aaf47e1-8dee-4609-922a-5455ae571a26",
+						"exec": [
+							"pm.test(\"204 status code\", function () {\r",
+							"    pm.response.to.have.status(204);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
 			"request": {
 				"auth": {
 					"type": "bearer",
@@ -1696,6 +2117,20 @@
 		},
 		{
 			"name": "del boat 6",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "1b3a72fd-d239-49c1-855c-84d145510172",
+						"exec": [
+							"pm.test(\"204 status code\", function () {\r",
+							"    pm.response.to.have.status(204);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
 			"request": {
 				"auth": {
 					"type": "bearer",
@@ -1724,6 +2159,20 @@
 		},
 		{
 			"name": "del boat 7",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "31f0223a-0d06-4d4b-8b1c-37cfcb71df20",
+						"exec": [
+							"pm.test(\"204 status code\", function () {\r",
+							"    pm.response.to.have.status(204);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
 			"request": {
 				"auth": {
 					"type": "bearer",
@@ -1752,6 +2201,20 @@
 		},
 		{
 			"name": "del boat 3",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "dbb6e8cc-250c-4e40-810d-7fea9f49072d",
+						"exec": [
+							"pm.test(\"204 status code\", function () {\r",
+							"    pm.response.to.have.status(204);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
 			"request": {
 				"auth": {
 					"type": "bearer",
@@ -1780,6 +2243,20 @@
 		},
 		{
 			"name": "get boats jwt1 200 Copy 2",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "122c4217-c067-4329-824c-95e4cb65cd8c",
+						"exec": [
+							"pm.test(\"200 status code\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
 			"protocolProfileBehavior": {
 				"disabledSystemHeaders": {
 					"accept": true
@@ -1818,6 +2295,20 @@
 		},
 		{
 			"name": "delete user2",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "cbf6b720-fd5b-4080-a158-ef4d92ee1471",
+						"exec": [
+							"pm.test(\"204 status code\", function () {\r",
+							"    pm.response.to.have.status(204);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
 			"request": {
 				"method": "DELETE",
 				"header": [],
@@ -1836,17 +2327,31 @@
 		},
 		{
 			"name": "delete user1",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "22f67fc3-d296-4f94-abdc-1ea074fa7821",
+						"exec": [
+							"pm.test(\"204 status code\", function () {\r",
+							"    pm.response.to.have.status(204);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
 			"request": {
 				"method": "DELETE",
 				"header": [],
 				"url": {
-					"raw": "{{app_url}}/users/{{user_i2d}}",
+					"raw": "{{app_url}}/users/{{user_id1}}",
 					"host": [
 						"{{app_url}}"
 					],
 					"path": [
 						"users",
-						"{{user_i2d}}"
+						"{{user_id1}}"
 					]
 				}
 			},

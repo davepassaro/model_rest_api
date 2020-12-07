@@ -7,17 +7,21 @@ import auxfunctions
 client = datastore.Client()
 bp = Blueprint('boat' ,__name__, url_prefix='/boats')
 
-@bp.route('', methods=['POST','GET'])
+@bp.route('', methods=['POST','GET','PATCH'])
 def boats_get_post():
     if request.method == 'POST':
         if 'application/json' not in request.accept_mimetypes:
             return (jsonify({"Error": "Media Type unsupported"}),406)
         content = request.get_json()
+        if (content) == None:
+            return (jsonify({
+                "Error": "Something went wrong."
+                }), 400)
         headers = request.headers
         bearer = headers.get('Authorization')    # Bearer YourTokenHere
         if bearer == None: 
             return (jsonify({
-                "Error": "The request token was missing or invalid"
+                "Error": "The request token header was missing or invalid"
                 }), 401)
         token = bearer.split()[1]  # YourTokenHere cited stack overflowhttps://stackoverflow.com/questions/63518441/how-to-read-a-bearer-token-from-postman-into-python-code
         vered = auxfunctions.verify(token) 
@@ -89,7 +93,7 @@ def boats_get_post():
             output["next"] = next_url
         return json.dumps(output)
     else:
-        return jsonify('Method not recogonized',400)
+        return (jsonify('Method not recogonized'),405)
 
 #  results = list(query.fetch())
 #        for e in results:
@@ -129,7 +133,7 @@ def boats_patch_delete(id):
         boat_key = client.key(constants.boats, int(id))
         boat = client.get(key=boat_key)
         if content["owner"] != boat["owner"]:
-            return(jsonify({"Error": "User is not permitted to access this resource."}),401)
+            return(jsonify({"Error": "User is not permitted to access this resource."}),403)
         if not boat:
             return (jsonify({"Error": "No boat with this boat_id exists"}),404)
         boat.update({"name": content["name"], "type": content["type"],
@@ -171,7 +175,7 @@ def boats_patch_delete(id):
         if not boat:
             return (jsonify({"Error": "No boat with this boat_id exists"}),404)
         if content["owner"] != boat["owner"]:
-            return(jsonify({"Error": "User is not permitted to access this resource."},401))
+            return(jsonify({"Error": "User is not permitted to access this resource."}),403)
         print(content["owner"],boat["owner"])
         if "name" in content and content["name"]:
             boat.update({"name": content["name"]})
@@ -212,7 +216,7 @@ def boats_patch_delete(id):
                 "Error": "The request token was missing or invalid"
                 }), 401)
         if vered != boat["owner"]:
-            return(jsonify({"Error": "User is not permitted to access this resource."},401))
+            return(jsonify({"Error": "User is not permitted to access this resource."}),403)
         query = client.query(kind=constants.loads)
         results = list(query.fetch())
         for e in results:
@@ -265,11 +269,11 @@ def boats_patch_delete(id):
             "self": (request.url )#+ "/" + str(boat.key.id))
             }))
             else:
-                return(jsonify({"Error": "User is not permitted to access this resource."},401))
+                return(jsonify({"Error": "User is not permitted to access this resource."}),403)
         else:
             return (jsonify({"Error": "No boat with this boat_id exists"}),404)
     else:
-        return jsonify('Method not recogonized',400)
+        return jsonify('Method not recogonized',405)
 
 
 
@@ -304,7 +308,7 @@ def add_remove_Loads(idLoad,idBoat):
         print(vered,boat)
         
         if vered != boat["owner"]:
-            return(jsonify({"Error": "User is not permitted to access this resource."},401))
+            return(jsonify({"Error": "User is not permitted to access this resource."}),403)
         load_key = client.key(constants.loads, int(idLoad))
         load = client.get(key=load_key)
         print(load,"here")
@@ -347,8 +351,8 @@ def add_remove_Loads(idLoad,idBoat):
         boat_key = client.key(constants.boats, int(idBoat))
         boat = client.get(key=boat_key)
         if vered != boat["owner"]:
-            return(jsonify({"Error": "User is not permitted to access this resource."},401))
-        #print("boat ",boat)
+            return(jsonify({"Error": "User is not permitted to access this resource."}),403)
+        #print("boat ",boat
         #print("load   ",load)
 
         #print("here")
@@ -364,6 +368,10 @@ def add_remove_Loads(idLoad,idBoat):
         client.put(load)
         client.put(boat)
         return ('',204)
+    else:
+        return jsonify('Method not recogonized',405)
+
+    
         
         
 
