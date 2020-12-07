@@ -128,6 +128,8 @@ def boats_patch_delete(id):
                 }), 401)
         boat_key = client.key(constants.boats, int(id))
         boat = client.get(key=boat_key)
+        if content["owner"] != boat["owner"]:
+            return(jsonify({"Error": "User is not permitted to access this resource."},401))
         if not boat:
             return (jsonify({"Error": "No boat with this boat_id exists"}),404)
         boat.update({"name": content["name"], "type": content["type"],
@@ -168,6 +170,9 @@ def boats_patch_delete(id):
         boat = client.get(key=boat_key)
         if not boat:
             return (jsonify({"Error": "No boat with this boat_id exists"}),404)
+        if content["owner"] != boat["owner"]:
+            return(jsonify({"Error": "User is not permitted to access this resource."},401))
+        print(content["owner"],boat["owner"])
         if "name" in content and content["name"]:
             boat.update({"name": content["name"]})
         if "type" in content and content["type"]:
@@ -186,10 +191,13 @@ def boats_patch_delete(id):
         "self": (request.url)# + "/" + str(boat.key.id))
         }), 200)
     elif request.method == 'DELETE':
+        if not id:
+            return (jsonify({"Error": "No boat id provided"}),404)
         key = client.key(constants.boats, int(id))
         boat = client.get(key=key)
         if not boat:
             return (jsonify({"Error": "No boat with this boat_id exists"}),404)
+
         headers = request.headers
         bearer = headers.get('Authorization')    # Bearer YourTokenHere
         if bearer == None: 
@@ -203,6 +211,8 @@ def boats_patch_delete(id):
             return (jsonify({
                 "Error": "The request token was missing or invalid"
                 }), 401)
+        if vered != boat["owner"]:
+            return(jsonify({"Error": "User is not permitted to access this resource."},401))
         query = client.query(kind=constants.loads)
         results = list(query.fetch())
         for e in results:
@@ -217,7 +227,7 @@ def boats_patch_delete(id):
         if 'application/json' not in request.accept_mimetypes:
             return (jsonify({"Error": "Media Type unsupported"}),406)
         #print("url      ",request.url)
-        content = request.get_json()
+        content ={}
         headers = request.headers
         bearer = headers.get('Authorization')    # Bearer YourTokenHere
         if bearer == None: 
@@ -226,34 +236,38 @@ def boats_patch_delete(id):
                 }), 401)
         token = bearer.split()[1]  # YourTokenHere cited stack overflowhttps://stackoverflow.com/questions/63518441/how-to-read-a-bearer-token-from-postman-into-python-code
         vered = auxfunctions.verify(token) 
-        #print(vered)
+        print(vered)
         if  vered and vered != False:
             content["owner"] =vered
         else: 
             return (jsonify({
                 "Error": "The request token was missing or invalid"
                 }), 401)
+        
         boat_key = client.key(constants.boats, int(id))
         boat = client.get(key=boat_key)
         x = 0
         if boat:
-            #print("here1",boat["loads"])
-            for l in boat["loads"]:  #FOR DICTS IN LIST
-                #print("\n\nl",l,"\nl[id]",l["id"])
-                strToAdd = str(l["id"])
-                l["self"] = request.url_root+"loads/"+strToAdd
-            #print(boat)
-            return (jsonify({
-        "id": boat.key.id,
-        "name": boat["name"],
-        "type": boat["type"],
-        "length": boat["length"],
-        "owner" : boat["owner"],
-        "loads":boat["loads"],
-        "self": (request.url )#+ "/" + str(boat.key.id))
-        }))
+            if boat["owner"] == content["owner"]:
+                #print("here1",boat["loads"])
+                for l in boat["loads"]:  #FOR DICTS IN LIST
+                    #print("\n\nl",l,"\nl[id]",l["id"])
+                    strToAdd = str(l["id"])
+                    l["self"] = request.url_root+"loads/"+strToAdd
+                #print(boat)
+                return (jsonify({
+            "id": boat.key.id,
+            "name": boat["name"],
+            "type": boat["type"],
+            "length": boat["length"],
+            "owner" : boat["owner"],
+            "loads":boat["loads"],
+            "self": (request.url )#+ "/" + str(boat.key.id))
+            }))
+            else:
+                return(jsonify({"Error": "User is not permitted to access this resource."},401))
         else:
-           return (jsonify({"Error": "No boat with this boat_id exists"}),404)
+            return (jsonify({"Error": "No boat with this boat_id exists"}),404)
     else:
         return jsonify('Method not recogonized',400)
 
@@ -266,16 +280,34 @@ def boats_patch_delete(id):
 def add_remove_Loads(idLoad,idBoat):
     if request.method == 'PUT':
         content = request.get_json()
-        #print(content)
+        print(content)
+        headers = request.headers
+        bearer = headers.get('Authorization')    # Bearer YourTokenHere
+        if bearer == None: 
+            return (jsonify({
+                "Error": "The request token was missing or invalid"
+                }), 401)
+        token = bearer.split()[1]  # YourTokenHere cited stack overflowhttps://stackoverflow.com/questions/63518441/how-to-read-a-bearer-token-from-postman-into-python-code
+        vered = auxfunctions.verify(token) 
+        content={}
+        if  vered and vered != False:
+            content["owner"] =vered
+        else: 
+            return (jsonify({
+                "Error": "The request token was missing or invalid"
+                }), 401)
+
         boat_key = client.key(constants.boats, int(idBoat))
         boat= client.get(key=boat_key)
-        #print ("             \n\n",boat,"\n\n\n")
-        #print ("             \n\n\n here\n\n")
-
         if not boat:# or boat["loads"][0] == idLoad:
             return (jsonify({"Error":  'The specified boat and/or load does not exist'}),404)
+        print(vered,boat)
+        
+        if vered != boat["owner"]:
+            return(jsonify({"Error": "User is not permitted to access this resource."},401))
         load_key = client.key(constants.loads, int(idLoad))
         load = client.get(key=load_key)
+        print(load,"here")
         if not load:# or boat.key.id != slip["current_boat"]:
             return (jsonify({"Error":  'The specified boat and/or load does not exist'}),404)
         for k in boat["loads"]:
@@ -286,7 +318,7 @@ def add_remove_Loads(idLoad,idBoat):
         load.update({"carrier" :{"id": int(idBoat),"name":boat["name"]}})
         #,{"self",request.url_root+str(idBoat)}}})
         #boat.update({"loads":{"id":int(idLoad)}})
-        boat["loads"].append({"id":idLoad})
+        boat["loads"].append({"id":idLoad,"delivery_date":load["delivery_date"],"content":load["content"],"weight":load["weight"]})
         client.put(load)
         client.put(boat)
         #print ("\n\n",boat,"\n\n",load,"\n\n")
@@ -294,10 +326,28 @@ def add_remove_Loads(idLoad,idBoat):
         return ('',204)
     if request.method == 'DELETE':
         content = request.get_json()
+        headers = request.headers
+        bearer = headers.get('Authorization')    # Bearer YourTokenHere
+        if bearer == None: 
+            return (jsonify({
+                "Error": "The request token was missing or invalid"
+                }), 401)
+        token = bearer.split()[1]  # YourTokenHere cited stack overflowhttps://stackoverflow.com/questions/63518441/how-to-read-a-bearer-token-from-postman-into-python-code
+        vered = auxfunctions.verify(token) 
+        content={}
+        if  vered and vered != False:
+            content["owner"] =vered
+        else: 
+            return (jsonify({
+                "Error": "The request token was missing or invalid"
+                }), 401)
+
         load_key = client.key(constants.loads, int(idLoad))
         load = client.get(key=load_key)
         boat_key = client.key(constants.boats, int(idBoat))
         boat = client.get(key=boat_key)
+        if vered != boat["owner"]:
+            return(jsonify({"Error": "User is not permitted to access this resource."},401))
         #print("boat ",boat)
         #print("load   ",load)
 
