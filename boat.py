@@ -129,7 +129,7 @@ def boats_patch_delete(id):
         boat_key = client.key(constants.boats, int(id))
         boat = client.get(key=boat_key)
         if content["owner"] != boat["owner"]:
-            return(jsonify({"Error": "User is not permitted to access this resource."},401))
+            return(jsonify({"Error": "User is not permitted to access this resource."}),401)
         if not boat:
             return (jsonify({"Error": "No boat with this boat_id exists"}),404)
         boat.update({"name": content["name"], "type": content["type"],

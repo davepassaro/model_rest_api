@@ -32,7 +32,7 @@ client_id = "1034814845689-3gua5nmfjbl17jndavgg4ubjqq77to4f.apps.googleuserconte
 client_secret = "73EUBGWnTtZl8Ap3PAIRKiRo"
 # This is the page that you will use to decode and collect the info from
 # the Google authentication flow
-redirect_uri = 'http://localhost:8080/oauth'  # 'https://dave-final-493.wm.r.appspot.com/oauth' #change when deployed*&$%*&$%*&$%*&$%*&$%*&$*&$%
+redirect_uri = 'https://dave-final-493.wm.r.appspot.com/oauth'  # 'https://dave-final-493.wm.r.appspot.com/oauth' #change when deployed*&$%*&$%*&$%*&$%*&$%*&$*&$%
 
 # These let us get basic info to identify a user and not much else
 # they are part of the Google People API
