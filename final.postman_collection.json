@@ -246,6 +246,70 @@
 			"response": []
 		},
 		{
+			"name": "post boat1 own 1 missing content 400",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "dd02fa90-ea5a-47be-80a5-51904b96d6ff",
+						"exec": [
+							"//Set boat id environment variable from response\r",
+							"pm.environment.set(\"boat01_id\", pm.response.json()[\"id\"]);\r",
+							"\r",
+							"pm.test(\"201 status code\", function () {\r",
+							"    pm.response.to.have.status(201);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"accept": true
+				}
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{jwt1}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"name\": \"pas1\",\r\n  \"type\": \"Yatch\",\r\n  \"length\": 99\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{app_url}}/boats",
+					"host": [
+						"{{app_url}}"
+					],
+					"path": [
+						"boats"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "get boats jwt1 200 Copy",
 			"event": [
 				{
@@ -1489,114 +1553,6 @@
 			"response": []
 		},
 		{
-			"name": "put boat1 on load own1 wrong jwt 403",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"id": "c347ed1c-86ef-4c66-bd04-d38b8abeb57e",
-						"exec": [
-							"\r",
-							"pm.test(\"403 status code\", function () {\r",
-							"    pm.response.to.have.status(403);\r",
-							"});"
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "{{jwt2}}",
-							"type": "string"
-						}
-					]
-				},
-				"method": "PUT",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "{{app_url}}/boats/{{boat01_id}}/loads/{{load01_id}}",
-					"host": [
-						"{{app_url}}"
-					],
-					"path": [
-						"boats",
-						"{{boat01_id}}",
-						"loads",
-						"{{load01_id}}"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "del boat1 on load own1 wrong jwt 403",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"id": "cd9e047e-a4d9-41a2-b227-8d07845a1022",
-						"exec": [
-							"\r",
-							"pm.test(\"403 status code\", function () {\r",
-							"    pm.response.to.have.status(403);\r",
-							"});"
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "{{jwt2}}",
-							"type": "string"
-						}
-					]
-				},
-				"method": "DELETE",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "{{app_url}}/boats/{{boat01_id}}/loads/{{load01_id}}",
-					"host": [
-						"{{app_url}}"
-					],
-					"path": [
-						"boats",
-						"{{boat01_id}}",
-						"loads",
-						"{{load01_id}}"
-					]
-				}
-			},
-			"response": []
-		},
-		{
 			"name": "get load01 200",
 			"event": [
 				{
@@ -1680,7 +1636,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\"name\":\"passarod1\"}",
+					"raw": "",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -1837,7 +1793,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\"name\":\"passarod1\"}",
+					"raw": "",
 					"options": {
 						"raw": {
 							"language": "json"

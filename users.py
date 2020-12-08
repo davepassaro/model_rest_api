@@ -33,16 +33,15 @@ def users_get_post():
             content["user_Id"] =vered
         else: 
             return (jsonify({
-                "Error": "The request token was missing or invalid(2)"
+                "Error": "The request token was missing or invalid"
                 }), 401)
         
         new_user = datastore.entity.Entity(key=client.key(constants.users))
-        new_user.update({"name":content["name"],"user_Id":content["user_Id"],"boats" : []})
+        new_user.update({"name":content["name"],"user_Id":content["user_Id"]})
         client.put(new_user)
         return (jsonify({
         "id": new_user.key.id,
-        "user_Id": new_user["user_Id"],
-        "boats" : [],
+        "user_Id": new_user["user_Id"],      
         "name":content["name"],
         "self": (request.url + "/" + str(new_user.key.id))
         }), 201)

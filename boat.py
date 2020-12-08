@@ -284,31 +284,11 @@ def boats_patch_delete(id):
 def add_remove_Loads(idLoad,idBoat):
     if request.method == 'PUT':
         content = request.get_json()
-        print(content)
-        headers = request.headers
-        bearer = headers.get('Authorization')    # Bearer YourTokenHere
-        if bearer == None: 
-            return (jsonify({
-                "Error": "The request token was missing or invalid"
-                }), 401)
-        token = bearer.split()[1]  # YourTokenHere cited stack overflowhttps://stackoverflow.com/questions/63518441/how-to-read-a-bearer-token-from-postman-into-python-code
-        vered = auxfunctions.verify(token) 
-        content={}
-        if  vered and vered != False:
-            content["owner"] =vered
-        else: 
-            return (jsonify({
-                "Error": "The request token was missing or invalid"
-                }), 401)
-
         boat_key = client.key(constants.boats, int(idBoat))
         boat= client.get(key=boat_key)
         if not boat:# or boat["loads"][0] == idLoad:
-            return (jsonify({"Error":  'The specified boat and/or load does not exist'}),404)
-        print(vered,boat)
-        
-        if vered != boat["owner"]:
-            return(jsonify({"Error": "User is not permitted to access this resource."}),403)
+            return (jsonify({"Error":  'The specified boat and/or load does not exist'}),404)        
+    
         load_key = client.key(constants.loads, int(idLoad))
         load = client.get(key=load_key)
         print(load,"here")
@@ -330,28 +310,10 @@ def add_remove_Loads(idLoad,idBoat):
         return ('',204)
     if request.method == 'DELETE':
         content = request.get_json()
-        headers = request.headers
-        bearer = headers.get('Authorization')    # Bearer YourTokenHere
-        if bearer == None: 
-            return (jsonify({
-                "Error": "The request token was missing or invalid"
-                }), 401)
-        token = bearer.split()[1]  # YourTokenHere cited stack overflowhttps://stackoverflow.com/questions/63518441/how-to-read-a-bearer-token-from-postman-into-python-code
-        vered = auxfunctions.verify(token) 
-        content={}
-        if  vered and vered != False:
-            content["owner"] =vered
-        else: 
-            return (jsonify({
-                "Error": "The request token was missing or invalid"
-                }), 401)
-
         load_key = client.key(constants.loads, int(idLoad))
         load = client.get(key=load_key)
         boat_key = client.key(constants.boats, int(idBoat))
         boat = client.get(key=boat_key)
-        if vered != boat["owner"]:
-            return(jsonify({"Error": "User is not permitted to access this resource."}),403)
         #print("boat ",boat
         #print("load   ",load)
 
