@@ -6,8 +6,8 @@ from google.oauth2 import id_token
 from google.auth import crypt
 from google.auth import jwt
 from google.auth.transport import requests
-client_id = "1034814845689-3gua5nmfjbl17jndavgg4ubjqq77to4f.apps.googleusercontent.com"
-client_secret = "73EUBGWnTtZl8Ap3PAIRKiRo"
+client_id = ""
+client_secret = ""
 def verify(jwtok):
     req = requests.Request()
     #print(jwtok,"jwt") 
